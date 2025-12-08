@@ -26,13 +26,16 @@ body {
     background: var(--bg-secondary);
     color: var(--text-primary);
     height: 100vh;
+    height: 100dvh; /* Dynamic viewport height for mobile */
     overflow: hidden;
+    -webkit-overflow-scrolling: touch;
 }
 
 /* Main Layout */
 .app-container {
     display: flex;
     height: 100vh;
+    height: 100dvh; /* Dynamic viewport height for mobile */
 }
 
 /* Sidebar */
@@ -724,6 +727,10 @@ body {
     background: var(--bg-primary);
     border-top: 1px solid var(--border-color);
     padding: 16px 24px;
+    padding-bottom: max(16px, env(safe-area-inset-bottom));
+    position: relative;
+    z-index: 10;
+    flex-shrink: 0;
 }
 
 .input-container {
@@ -878,7 +885,7 @@ body {
     padding: 12px 16px;
     border: 1px solid var(--border-color);
     border-radius: 12px;
-    font-size: 14px;
+    font-size: 16px; /* Prevent iOS zoom on focus */
     resize: none;
     height: 48px;
     min-height: 48px;
@@ -886,6 +893,9 @@ body {
     font-family: inherit;
     line-height: 1.5;
     box-sizing: border-box;
+    -webkit-appearance: none; /* Remove iOS default styling */
+    appearance: none;
+    touch-action: manipulation; /* Improve touch responsiveness */
 }
 
 .attached-files:not(:empty) ~ .message-input {
@@ -1176,10 +1186,13 @@ body {
 
     .chat-area {
         padding: 12px;
+        -webkit-overflow-scrolling: touch;
     }
 
     .input-area {
         padding: 12px;
+        /* Ensure input area stays above iOS keyboard */
+        padding-bottom: max(12px, env(safe-area-inset-bottom));
     }
 
     .input-container {
@@ -1187,8 +1200,9 @@ body {
     }
 
     .attach-btn {
-        width: 40px;
-        height: 40px;
+        width: 44px;
+        height: 44px;
+        touch-action: manipulation;
     }
 
     .attach-btn svg {
@@ -1197,16 +1211,21 @@ body {
     }
 
     .message-input {
-        height: 40px;
-        min-height: 40px;
+        height: 44px;
+        min-height: 44px;
         padding: 10px 12px;
-        font-size: 14px;
+        font-size: 16px; /* Keep 16px to prevent iOS zoom */
+        touch-action: manipulation;
+        -webkit-user-select: text;
+        user-select: text;
     }
 
     .send-btn {
-        height: 40px;
+        height: 44px;
+        min-width: 44px;
         padding: 0 16px;
         font-size: 14px;
+        touch-action: manipulation;
     }
 
     .message {
@@ -1242,7 +1261,7 @@ body {
     }
 
     .mode-select {
-        font-size: 13px;
+        font-size: 16px; /* Prevent iOS zoom */
         padding: 8px;
     }
 
@@ -1256,7 +1275,7 @@ body {
     }
 
     .chat-history-search {
-        font-size: 13px;
+        font-size: 16px; /* Prevent iOS zoom */
         padding: 8px;
     }
 
@@ -1334,4 +1353,38 @@ body {
 
 ::-webkit-scrollbar-thumb:hover {
     background: var(--text-secondary);
+}
+
+/* iOS Safari Fixes */
+@supports (-webkit-touch-callout: none) {
+    /* iOS only */
+    body {
+        /* Fix for iOS Safari 100vh issue */
+        height: -webkit-fill-available;
+    }
+
+    .app-container {
+        height: -webkit-fill-available;
+    }
+
+    .message-input {
+        /* Ensure textarea is tappable on iOS */
+        -webkit-user-select: text;
+        user-select: text;
+        cursor: text;
+    }
+
+    .input-area {
+        /* Ensure input stays above iOS keyboard */
+        position: sticky;
+        bottom: 0;
+    }
+
+    /* Improve touch targets on iOS */
+    .send-btn,
+    .attach-btn,
+    .header-btn {
+        min-height: 44px;
+        min-width: 44px;
+    }
 }

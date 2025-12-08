@@ -1357,6 +1357,20 @@ const app = {
             this.style.height = 'auto';
             this.style.height = Math.min(this.scrollHeight, 200) + 'px';
         });
+
+        // iOS touch fix: ensure textarea is focusable
+        textarea.addEventListener('touchstart', function(e) {
+            // Allow the touch event to proceed naturally
+            e.stopPropagation();
+        }, { passive: true });
+
+        // Handle iOS virtual keyboard
+        textarea.addEventListener('focus', function() {
+            // Scroll input into view after keyboard opens
+            setTimeout(() => {
+                this.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 300);
+        });
     },
 
     formatDate(timestamp) {

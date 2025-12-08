@@ -170,7 +170,7 @@ CREATE TABLE conversations (
     CONSTRAINT valid_mode CHECK (mode IN ('ai_agent', 'custom_prompt', 'url_context')),
     CONSTRAINT valid_temperature CHECK (temperature >= 0 AND temperature <= 2),
     CONSTRAINT prompt_required CHECK (
-        (mode = 'custom_prompt' AND custom_prompt IS NOT NULL) OR
+        (mode = 'custom_prompt') OR
         (mode = 'ai_agent' AND system_prompt_id IS NOT NULL) OR
         mode = 'url_context'
     )
