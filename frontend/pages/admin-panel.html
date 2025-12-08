@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - User Management</title>
+    <link rel="stylesheet" href="../assets/css/admin-panel.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="admin-header">
+        <h1>
+            <div class="admin-logo">👤</div>
+            Admin Panel
+        </h1>
+        <div class="header-actions">
+            <a href="ai-chatbot.html" class="back-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M19 12H5"></path>
+                    <path d="M12 19l-7-7 7-7"></path>
+                </svg>
+                Back to Chat
+            </a>
+            <div class="admin-user">
+                <span>👤</span>
+                <span id="adminName">Admin</span>
+            </div>
+            <button class="logout-btn" onclick="admin.logout()">Logout</button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="admin-container">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h2 class="page-title">User Management</h2>
+            <p class="page-subtitle">Create and manage user accounts for AI Chatbot</p>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">👥</div>
+                <div class="stat-label">Total Users</div>
+                <div class="stat-value" id="totalUsers">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">✅</div>
+                <div class="stat-label">Active Users</div>
+                <div class="stat-value" id="activeUsers">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">⏳</div>
+                <div class="stat-label">Pending Approval</div>
+                <div class="stat-value" id="pendingUsers">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🔧</div>
+                <div class="stat-label">Admins</div>
+                <div class="stat-value" id="adminUsers">0</div>
+            </div>
+        </div>
+
+        <!-- Tabs Navigation -->
+        <div class="tabs-container">
+            <div class="tabs-nav">
+                <button class="tab-btn active" data-tab="users" onclick="admin.switchTab('users')">
+                    All Users
+                </button>
+                <button class="tab-btn" data-tab="pending" onclick="admin.switchTab('pending')">
+                    Pending Approvals
+                    <span class="tab-badge" id="pendingBadge">0</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Users Tab Content -->
+        <div class="tab-content active" id="usersTab">
+            <div class="management-card">
+                <div class="card-header">
+                    <h3 class="card-title">All Users</h3>
+                    <button class="add-user-btn" onclick="admin.openCreateUserModal()">+ Add New User</button>
+                </div>
+
+                <div class="search-filter">
+                    <input type="text" class="search-input" placeholder="Search users by name or email..."
+                           oninput="admin.filterUsers(this.value)">
+                    <select class="filter-select" onchange="admin.filterByRole(this.value)">
+                        <option value="">All Roles</option>
+                        <option value="user">User</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                    <select class="filter-select" onchange="admin.filterByStatus(this.value)">
+                        <option value="">All Status</option>
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                    </select>
+                </div>
+
+                <div id="usersTableContainer">
+                    <!-- Table will be rendered here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Pending Approvals Tab Content -->
+        <div class="tab-content" id="pendingTab">
+            <div class="management-card">
+                <div class="card-header">
+                    <h3 class="card-title">Pending User Approvals</h3>
+                </div>
+
+                <!-- Bulk Actions Bar -->
+                <div class="bulk-actions-bar" id="bulkActionsBar">
+                    <div class="bulk-select">
+                        <label class="checkbox-wrapper">
+                            <input type="checkbox" id="selectAllPending" onchange="admin.toggleSelectAll()">
+                            <span class="checkmark"></span>
+                        </label>
+                        <span class="selected-count" id="selectedCount">0 selected</span>
+                    </div>
+                    <div class="bulk-buttons">
+                        <button class="bulk-btn approve" onclick="admin.bulkApprove()" id="bulkApproveBtn" disabled>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            Approve Selected
+                        </button>
+                        <button class="bulk-btn reject" onclick="admin.bulkReject()" id="bulkRejectBtn" disabled>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                            </svg>
+                            Reject Selected
+                        </button>
+                    </div>
+                </div>
+
+                <div id="pendingTableContainer">
+                    <!-- Pending users table will be rendered here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit User Modal -->
+    <div class="modal" id="userModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle">Add New User</h3>
+                <p class="modal-subtitle">Fill in the user information below</p>
+            </div>
+
+            <form id="userForm" onsubmit="admin.saveUser(event)">
+                <div class="form-group">
+                    <label class="form-label">Username</label>
+                    <input type="text" class="form-input" id="userName" placeholder="Enter username" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Email Address</label>
+                    <input type="email" class="form-input" id="userEmail" placeholder="Enter email address" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <input type="password" class="form-input" id="userPassword" placeholder="Enter password" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Role</label>
+                    <select class="form-select" id="userRole" required>
+                        <option value="user">User</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Status</label>
+                    <select class="form-select" id="userStatus" required>
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                    </select>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" onclick="admin.closeModal()">Cancel</button>
+                    <button type="submit" class="btn-primary">Save User</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="../assets/js/admin-panel.js"></script>
+</body>
+</html>

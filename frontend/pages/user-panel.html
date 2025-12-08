@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Settings - LTG Assistant</title>
+    <link rel="stylesheet" href="../assets/css/user-panel.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="user-header">
+        <h1>
+            <div class="user-logo">&#9881;</div>
+            User Settings
+        </h1>
+        <div class="header-actions">
+            <a href="ai-chatbot.html" class="back-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M19 12H5"></path>
+                    <path d="M12 19l-7-7 7-7"></path>
+                </svg>
+                Back to Chat
+            </a>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="user-container">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h2 class="page-title">Account Settings</h2>
+            <p class="page-subtitle">Manage your profile information and security settings</p>
+        </div>
+
+        <!-- User Info Display -->
+        <div class="user-info-display">
+            <div class="user-avatar-large" id="userAvatar">U</div>
+            <div class="user-details">
+                <div class="user-name-display" id="displayName">Loading...</div>
+                <div class="user-email-display" id="displayEmail">Loading...</div>
+            </div>
+        </div>
+
+        <!-- Profile Form Card -->
+        <div class="form-card">
+            <div class="card-header">
+                <div class="card-icon">&#128100;</div>
+                <h3 class="card-title">Profile Information</h3>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-success" id="profileSuccessAlert"></div>
+                <div class="alert alert-error" id="profileErrorAlert"></div>
+
+                <form id="profileForm">
+                    <div class="form-group">
+                        <label class="form-label">Email Address</label>
+                        <input type="email" class="form-input" id="userEmail" disabled>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Full Name</label>
+                        <input type="text" class="form-input" id="userFullName" placeholder="Enter your full name">
+                        <div class="field-error" id="fullNameError"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Username</label>
+                        <input type="text" class="form-input" id="userName" placeholder="Enter your username" required>
+                        <div class="field-error" id="nameError"></div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn-secondary" onclick="userPanel.resetProfileForm()">Cancel</button>
+                        <button type="submit" class="btn-primary" id="saveProfileBtn">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Password Form Card -->
+        <div class="form-card">
+            <div class="card-header">
+                <div class="card-icon">&#128274;</div>
+                <h3 class="card-title">Change Password</h3>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-success" id="passwordSuccessAlert"></div>
+                <div class="alert alert-error" id="passwordErrorAlert"></div>
+
+                <form id="passwordForm">
+                    <div class="form-group">
+                        <label class="form-label">Current Password</label>
+                        <input type="password" class="form-input" id="currentPassword" placeholder="Enter current password" required>
+                        <div class="field-error" id="currentPasswordError"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">New Password</label>
+                        <input type="password" class="form-input" id="newPassword" placeholder="Enter new password" required oninput="userPanel.checkPasswordStrength()">
+                        <div class="password-strength">
+                            <div class="strength-bar">
+                                <div class="strength-fill" id="strengthFill"></div>
+                            </div>
+                            <div class="strength-text" id="strengthText"></div>
+                        </div>
+                        <div class="password-requirements">
+                            <div class="requirements-title">Password Requirements:</div>
+                            <div class="requirement" id="reqLength">
+                                <span class="requirement-icon">&#10060;</span>
+                                At least 8 characters
+                            </div>
+                            <div class="requirement" id="reqUppercase">
+                                <span class="requirement-icon">&#10060;</span>
+                                At least one uppercase letter
+                            </div>
+                            <div class="requirement" id="reqNumber">
+                                <span class="requirement-icon">&#10060;</span>
+                                At least one number
+                            </div>
+                        </div>
+                        <div class="field-error" id="newPasswordError"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Confirm New Password</label>
+                        <input type="password" class="form-input" id="confirmPassword" placeholder="Confirm new password" required oninput="userPanel.checkPasswordMatch()">
+                        <div class="field-error" id="confirmPasswordError"></div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn-secondary" onclick="userPanel.resetPasswordForm()">Cancel</button>
+                        <button type="submit" class="btn-primary" id="changePasswordBtn">Change Password</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="../assets/js/api-service.js"></script>
+    <script src="../assets/js/user-panel.js"></script>
+</body>
+</html>

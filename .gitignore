@@ -1,0 +1,49 @@
+# Sensitive files
+.env
+.env.local
+.env.*
+*.env
+.venv
+
+# SSL Certificates
+certificates/
+*.crt
+*.key
+*.pem
+
+# API keys and secrets
+*api_key*
+*secret*
+firecrawl_config.sh
+
+# Claude files
+# CLAUDE.md
+.claude/settings.local.json
+
+# MCP config
+.mcp.json
+
+# Scripts with sensitive data
+scripts/*_local.sh
+
+# macOS files
+.DS_Store
+
+# Node modules - always exclude from repo
+node_modules/
+.node_modules/
+pnpm-lock.yaml
+
+# Temporary directories
+.tmp/
+.venv/
+.pytest_cache/
+chroma_db/
+__pycache__/
+uploads/
+
+# Never commit real API keys
+*_API_KEY
+# Cookie files - contains sensitive authentication data
+cookies.txt
+*.cookies.txt

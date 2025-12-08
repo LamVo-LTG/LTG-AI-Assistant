@@ -1,0 +1,13 @@
+{
+  "name": "ltg-assistant-frontend",
+  "version": "1.0.0",
+  "description": "Frontend for LTG Assistant AI Chatbot",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": ["ai", "chatbot", "frontend"],
+  "author": "Levis Lam",
+  "license": "MIT"
+}

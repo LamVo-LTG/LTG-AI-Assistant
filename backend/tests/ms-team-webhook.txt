@@ -1,0 +1,50 @@
+curl -X POST "https://default9fa2a90934b74d31bb6152c5e0ceef.d6.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/869001b17c674a18aeca9faca98a6c08/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=tReZVFIuWlUwFw_TKC-NrGvAF7D1RMrswN3w9n73YvM" -H "Content-Type: application/json" -d '{
+  "attachments": [
+    {
+      "contentType": "application/vnd.microsoft.card.adaptive",
+      "content": {
+        "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+        "type": "AdaptiveCard",
+        "version": "1.4",
+        "body": [
+          {
+            "type": "TextBlock",
+            "size": "Large",
+            "weight": "Bolder",
+            "text": "🆕 New User Registration",
+            "wrap": true
+          },
+          {
+            "type": "FactSet",
+            "facts": [
+              {
+                "title": "Full Name:",
+                "value": "Test User"
+              },
+              {
+                "title": "Email:",
+                "value": "test@example.com"
+              },
+              {
+                "title": "Timestamp:",
+                "value": "2025-12-06 10:50:00"
+              }
+            ]
+          }
+        ],
+        "actions": [
+          {
+            "type": "Action.OpenUrl",
+            "title": "✅ Approve User",
+            "url": "http://localhost:5500/pages/admin-panel.html?action=approve&email=test@example.com"
+          },
+          {
+            "type": "Action.OpenUrl",
+            "title": "👁️ View in Admin Panel",
+            "url": "http://localhost:5500/pages/admin-panel.html"
+          }
+        ]
+      }
+    }
+  ]
+}' -w "\n\nHTTP Status: %{http_code}" -s

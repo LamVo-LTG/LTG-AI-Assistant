@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - AI Chatbot</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #2563eb;
+            --primary-hover: #1d4ed8;
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
+            --danger-color: #dc2626;
+            --success-color: #16a34a;
+            --warning-color: #f59e0b;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        .signup-container {
+            width: 100%;
+            max-width: 420px;
+            animation: fadeInUp 0.6s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .signup-box {
+            background: var(--bg-primary);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 48px 40px;
+            max-width: 100%;
+            overflow: hidden;
+        }
+
+        .signup-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .signup-logo {
+            width: 72px;
+            height: 72px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            box-shadow: 0 8px 16px rgba(102, 126, 234, 0.4);
+        }
+
+        .signup-logo svg {
+            width: 40px;
+            height: 40px;
+            color: white;
+        }
+
+        .signup-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .signup-subtitle {
+            font-size: 15px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .error-message {
+            padding: 14px;
+            background: #fee2e2;
+            border: 1px solid #fecaca;
+            border-radius: 10px;
+            color: var(--danger-color);
+            font-size: 14px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+            animation: shake 0.5s ease;
+        }
+
+        .success-message {
+            padding: 14px;
+            background: #dcfce7;
+            border: 1px solid #bbf7d0;
+            border-radius: 10px;
+            color: var(--success-color);
+            font-size: 14px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .success-message.show {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .signup-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .form-field {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-field label {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 16px;
+            color: var(--text-secondary);
+            pointer-events: none;
+        }
+
+        .input-icon svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .signup-input {
+            width: 100%;
+            padding: 14px 16px 14px 48px;
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            font-size: 15px;
+            font-family: inherit;
+            transition: all 0.3s;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+        }
+
+        .signup-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+        }
+
+        .signup-input::placeholder {
+            color: var(--text-secondary);
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 16px;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .password-toggle:hover {
+            color: var(--primary-color);
+        }
+
+        .password-toggle svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .signup-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+            margin-top: 8px;
+        }
+
+        .signup-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+        }
+
+        .signup-btn:active {
+            transform: translateY(0);
+        }
+
+        .signup-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .login-link {
+            text-align: center;
+            margin-top: 32px;
+            font-size: 15px;
+            color: var(--text-secondary);
+        }
+
+        .login-link a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+
+        /* Loading spinner */
+        .spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-right: 8px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .signup-btn .spinner {
+            display: none;
+        }
+
+        .signup-btn.loading .spinner {
+            display: inline-block;
+        }
+
+        /* Pending approval screen */
+        .pending-screen {
+            display: none;
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        .pending-screen.show {
+            display: block;
+        }
+
+        .pending-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            box-shadow: 0 8px 16px rgba(245, 158, 11, 0.4);
+        }
+
+        .pending-icon svg {
+            width: 40px;
+            height: 40px;
+            color: white;
+        }
+
+        .pending-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+        }
+
+        .pending-message {
+            font-size: 15px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 24px;
+        }
+
+        .pending-email {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .back-to-login-btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .back-to-login-btn:hover {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        /* Mobile responsive */
+        @media (max-width: 480px) {
+            body {
+                padding: 12px;
+                align-items: flex-start;
+                padding-top: 24px;
+            }
+
+            .signup-container {
+                max-width: 100%;
+            }
+
+            .signup-box {
+                padding: 32px 24px;
+                border-radius: 16px;
+            }
+
+            .signup-header {
+                margin-bottom: 32px;
+            }
+
+            .signup-logo {
+                width: 64px;
+                height: 64px;
+                margin-bottom: 16px;
+            }
+
+            .signup-logo svg {
+                width: 32px;
+                height: 32px;
+            }
+
+            .signup-title {
+                font-size: 22px;
+            }
+
+            .signup-subtitle {
+                font-size: 14px;
+            }
+
+            .signup-form {
+                gap: 18px;
+            }
+
+            .form-field {
+                gap: 6px;
+            }
+
+            .form-field label {
+                font-size: 13px;
+            }
+
+            .signup-input {
+                padding: 12px 14px 12px 44px;
+                font-size: 15px;
+            }
+
+            .input-icon {
+                left: 14px;
+            }
+
+            .password-toggle {
+                right: 14px;
+            }
+
+            .signup-btn {
+                padding: 14px;
+                font-size: 15px;
+            }
+
+            .login-link {
+                margin-top: 24px;
+                font-size: 14px;
+            }
+
+            .error-message,
+            .success-message {
+                padding: 12px;
+                font-size: 13px;
+                margin-bottom: 16px;
+            }
+
+            .pending-title {
+                font-size: 20px;
+            }
+
+            .pending-message {
+                font-size: 14px;
+            }
+        }
+
+        @media (max-width: 360px) {
+            body {
+                padding: 8px;
+                padding-top: 16px;
+            }
+
+            .signup-box {
+                padding: 24px 20px;
+            }
+
+            .signup-title {
+                font-size: 20px;
+            }
+
+            .signup-subtitle {
+                font-size: 13px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="signup-container">
+        <div class="signup-box">
+            <!-- Registration Form -->
+            <div id="signupFormContainer">
+                <div class="signup-header">
+                    <div class="signup-logo">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <line x1="19" y1="8" x2="19" y2="14"></line>
+                            <line x1="22" y1="11" x2="16" y2="11"></line>
+                        </svg>
+                    </div>
+                    <h1 class="signup-title">Create Account</h1>
+                    <p class="signup-subtitle">Sign up to start chatting with AI</p>
+                </div>
+
+                <div class="error-message" id="errorMessage">
+                    Error message will appear here.
+                </div>
+
+                <form class="signup-form" id="signupForm">
+                    <div class="form-field">
+                        <label for="fullName">Full Name</label>
+                        <div class="input-wrapper">
+                            <span class="input-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="12" cy="7" r="4"></circle>
+                                </svg>
+                            </span>
+                            <input
+                                type="text"
+                                id="fullName"
+                                class="signup-input"
+                                placeholder="Enter your full name"
+                            >
+                        </div>
+                    </div>
+
+                    <div class="form-field">
+                        <label for="username">Username</label>
+                        <div class="input-wrapper">
+                            <span class="input-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"></path>
+                                    <path d="M16 2v4"></path>
+                                    <path d="M8 2v4"></path>
+                                    <path d="M3 10h18"></path>
+                                </svg>
+                            </span>
+                            <input
+                                type="text"
+                                id="username"
+                                class="signup-input"
+                                placeholder="Choose a username"
+                                required
+                                minlength="3"
+                            >
+                        </div>
+                    </div>
+
+                    <div class="form-field">
+                        <label for="email">Email Address</label>
+                        <div class="input-wrapper">
+                            <span class="input-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                                    <polyline points="22,6 12,13 2,6"></polyline>
+                                </svg>
+                            </span>
+                            <input
+                                type="email"
+                                id="email"
+                                class="signup-input"
+                                placeholder="Enter your email"
+                                required
+                            >
+                        </div>
+                    </div>
+
+                    <div class="form-field">
+                        <label for="password">Password</label>
+                        <div class="input-wrapper">
+                            <span class="input-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                                </svg>
+                            </span>
+                            <input
+                                type="password"
+                                id="password"
+                                class="signup-input"
+                                placeholder="Create a password (min 6 characters)"
+                                required
+                                minlength="6"
+                            >
+                            <button type="button" class="password-toggle" id="togglePassword">
+                                <svg id="eyeIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="form-field">
+                        <label for="confirmPassword">Confirm Password</label>
+                        <div class="input-wrapper">
+                            <span class="input-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                                </svg>
+                            </span>
+                            <input
+                                type="password"
+                                id="confirmPassword"
+                                class="signup-input"
+                                placeholder="Confirm your password"
+                                required
+                            >
+                            <button type="button" class="password-toggle" id="toggleConfirmPassword">
+                                <svg id="eyeIconConfirm" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="signup-btn" id="signupBtn">
+                        <span class="spinner"></span>
+                        <span class="btn-text">Create Account</span>
+                    </button>
+                </form>
+
+                <div class="login-link">
+                    Already have an account? <a href="login.html">Sign in</a>
+                </div>
+            </div>
+
+            <!-- Pending Approval Screen -->
+            <div class="pending-screen" id="pendingScreen">
+                <div class="pending-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                </div>
+                <h2 class="pending-title">Pending Approval</h2>
+                <p class="pending-message">
+                    Your account has been created successfully!<br><br>
+                    Please wait for an administrator to approve your account.
+                    You will be able to sign in once your account is activated.<br><br>
+                    Email: <span class="pending-email" id="pendingEmail"></span>
+                </p>
+                <a href="login.html" class="back-to-login-btn">Back to Sign In</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Password toggle functionality
+        function setupPasswordToggle(toggleId, inputId, iconId) {
+            const toggle = document.getElementById(toggleId);
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(iconId);
+
+            toggle.addEventListener('click', function() {
+                const type = input.type === 'password' ? 'text' : 'password';
+                input.type = type;
+
+                if (type === 'text') {
+                    icon.innerHTML = `
+                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                        <line x1="1" y1="1" x2="23" y2="23"></line>
+                    `;
+                } else {
+                    icon.innerHTML = `
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    `;
+                }
+            });
+        }
+
+        setupPasswordToggle('togglePassword', 'password', 'eyeIcon');
+        setupPasswordToggle('toggleConfirmPassword', 'confirmPassword', 'eyeIconConfirm');
+
+        // Form submission
+        const signupForm = document.getElementById('signupForm');
+        const signupBtn = document.getElementById('signupBtn');
+        const errorMessage = document.getElementById('errorMessage');
+
+        signupForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const fullName = document.getElementById('fullName').value.trim();
+            const username = document.getElementById('username').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            // Client-side validation
+            if (password !== confirmPassword) {
+                errorMessage.textContent = 'Passwords do not match.';
+                errorMessage.classList.add('show');
+                return;
+            }
+
+            if (password.length < 6) {
+                errorMessage.textContent = 'Password must be at least 6 characters.';
+                errorMessage.classList.add('show');
+                return;
+            }
+
+            if (username.length < 3) {
+                errorMessage.textContent = 'Username must be at least 3 characters.';
+                errorMessage.classList.add('show');
+                return;
+            }
+
+            // Show loading state
+            signupBtn.classList.add('loading');
+            signupBtn.disabled = true;
+            errorMessage.classList.remove('show');
+
+            try {
+                // Use backend URL - detect if running on separate dev server (port 5500)
+                const apiBase = window.location.port === '5500' ? 'http://localhost:3000' : window.location.origin;
+                const response = await fetch(apiBase + '/api/auth/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, email, password, full_name: fullName || null })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    // Show pending approval screen
+                    document.getElementById('signupFormContainer').style.display = 'none';
+                    document.getElementById('pendingScreen').classList.add('show');
+                    document.getElementById('pendingEmail').textContent = email;
+                } else {
+                    errorMessage.textContent = data.error || 'Registration failed. Please try again.';
+                    errorMessage.classList.add('show');
+                    signupBtn.classList.remove('loading');
+                    signupBtn.disabled = false;
+                }
+            } catch (error) {
+                console.error('Registration error:', error);
+                errorMessage.textContent = 'Connection error. Please check if the server is running.';
+                errorMessage.classList.add('show');
+                signupBtn.classList.remove('loading');
+                signupBtn.disabled = false;
+            }
+        });
+
+        // Check if already logged in
+        window.addEventListener('load', function() {
+            const isLoggedIn = localStorage.getItem('isLoggedIn') || sessionStorage.getItem('isLoggedIn');
+            if (isLoggedIn === 'true') {
+                window.location.href = 'pages/ai-chatbot.html';
+            }
+        });
+    </script>
+</body>
+</html>
