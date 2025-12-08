@@ -1,7 +1,6 @@
 # Sensitive files
 .env
 .env.local
-.env.*
 *.env
 .venv
 
