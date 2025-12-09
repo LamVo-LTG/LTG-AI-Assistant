@@ -34,14 +34,14 @@ const admin = {
 
         if (!token || !userStr) {
             alert('Please login first');
-            window.location.href = '../login.html';
+            window.location.href = '/login.html';
             return false;
         }
 
         const user = JSON.parse(userStr);
         if (user.role !== 'admin') {
             alert('Access denied. Admin privileges required.');
-            window.location.href = 'ai-chatbot.html';
+            window.location.href = '/pages/ai-chatbot.html';
             return false;
         }
 
@@ -76,7 +76,7 @@ const admin = {
             } else {
                 if (response.status === 401) {
                     alert('Session expired. Please login again.');
-                    window.location.href = '../login.html';
+                    window.location.href = '/login.html';
                 } else {
                     console.error('Failed to load users:', data.error);
                     alert(data.error || 'Failed to load users');
@@ -716,7 +716,7 @@ const admin = {
         if (confirm('Are you sure you want to logout?')) {
             localStorage.clear();
             sessionStorage.clear();
-            window.location.href = '../login.html';
+            window.location.href = '/login.html';
         }
     }
 };

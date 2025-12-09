@@ -609,7 +609,7 @@
                 </form>
 
                 <div class="login-link">
-                    Already have an account? <a href="login.html">Sign in</a>
+                    Already have an account? <a href="/login.html">Sign in</a>
                 </div>
             </div>
 
@@ -628,7 +628,7 @@
                     You will be able to sign in once your account is activated.<br><br>
                     Email: <span class="pending-email" id="pendingEmail"></span>
                 </p>
-                <a href="login.html" class="back-to-login-btn">Back to Sign In</a>
+                <a href="/login.html" class="back-to-login-btn">Back to Sign In</a>
             </div>
         </div>
     </div>
@@ -736,7 +736,7 @@
         window.addEventListener('load', function() {
             const isLoggedIn = localStorage.getItem('isLoggedIn') || sessionStorage.getItem('isLoggedIn');
             if (isLoggedIn === 'true') {
-                window.location.href = 'pages/ai-chatbot.html';
+                window.location.href = '/pages/ai-chatbot.html';
             }
         });
     </script>

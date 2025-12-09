@@ -20,7 +20,7 @@ const app = {
         // Check if user is logged in
         const token = localStorage.getItem('token') || sessionStorage.getItem('token');
         if (!token) {
-            window.location.href = '../login.html';
+            window.location.href = '/login.html';
             return;
         }
 
@@ -1339,7 +1339,7 @@ const app = {
             sessionStorage.removeItem('isLoggedIn');
 
             // Redirect to login page
-            window.location.href = '../login.html';
+            window.location.href = '/login.html';
         }
     },
 
