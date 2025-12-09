@@ -1,6 +1,6 @@
 # LTG Assistant - Backend API
 
-Node.js + Express backend for the LTG Assistant AI Chatbot with JWT authentication and PostgreSQL database.
+Node.js + Express backend for the LTG Assistant AI Chatbot with JWT authentication and PostgreSQL database. Supports dual-mode deployment (Development HTTP / Production HTTPS with PM2 cluster).
 
 ---
 
@@ -28,8 +28,11 @@ This backend provides RESTful API endpoints for:
 - Role-based access control (admin/user)
 - JWT token-based authentication
 - PostgreSQL database integration
+- Static file serving for frontend
+- HTTP/HTTPS dual-mode support
+- PM2 cluster mode for production
 
-**Current Status:** Phase 1 Complete ✅
+**Current Status:** Production Deployment Complete ✅
 
 ---
 
@@ -45,6 +48,7 @@ This backend provides RESTful API endpoints for:
 | jsonwebtoken | ^9.0.2 | JWT authentication |
 | dotenv | ^16.3.1 | Environment variables |
 | cors | ^2.8.5 | Cross-origin requests |
+| PM2 | ^5.3.0 | Production process manager |
 | nodemon | ^3.0.1 | Development auto-reload |
 
 ---
@@ -75,13 +79,15 @@ backend/
 │   ├── utils/
 │   │   └── bcrypt.js         # Password hashing utilities
 │   │
-│   └── app.js                # Express app configuration
+│   └── app.js                # Express app + static file serving
 │
-├── .env                      # Environment variables (not in git)
+├── .env                      # Development environment (not in git)
+├── .env.production           # Production environment (not in git)
 ├── .env.example              # Example environment file
 ├── .gitignore                # Git ignore rules
+├── ecosystem.config.js       # PM2 cluster configuration
 ├── package.json              # Dependencies & scripts
-├── server.js                 # Server entry point
+├── server.js                 # Server entry point (HTTP/HTTPS)
 ├── make-admin.js             # Utility to make users admin
 └── README.md                 # This file
 ```
@@ -127,7 +133,9 @@ Create a `.env` file in the backend directory:
 ```env
 # Server Configuration
 PORT=3000
+HOST=localhost
 NODE_ENV=development
+SSL_ENABLED=false
 
 # Database Configuration
 DB_HOST=localhost
@@ -143,16 +151,51 @@ JWT_EXPIRES_IN=7d
 # CORS Configuration
 FRONTEND_URL=http://localhost:5500
 
-# AI Configuration (Phase 2+)
+# AI Configuration
 GEMINI_API_KEY=your_gemini_api_key_here
+```
+
+### Production Environment (.env.production)
+
+For production deployment with HTTPS:
+
+```env
+# Server Configuration
+PORT=443
+HOST=0.0.0.0
+NODE_ENV=production
+SSL_ENABLED=true
+SSL_KEY_PATH=C:/ssl/private.key
+SSL_CERT_PATH=C:/ssl/certificate.crt
+
+# Database Configuration
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=ltg_assistant_v1
+DB_USER=postgres
+DB_PASSWORD=your_secure_password_here
+
+# JWT Configuration
+JWT_SECRET=your_production_secret_key_here
+JWT_EXPIRES_IN=7d
+
+# CORS Configuration
+FRONTEND_URL=https://your-domain.com
+
+# AI Configuration
+GEMINI_API_KEY=your_gemini_api_key_here
+
+# PM2 Configuration
+PM2_INSTANCES=4
 ```
 
 ### Important Notes
 
-- ⚠️ **Never commit `.env` to git**
+- ⚠️ **Never commit `.env` or `.env.production` to git**
 - ✅ Use `.env.example` as a template
 - 🔐 Change `JWT_SECRET` in production
 - 🔐 Use strong passwords for `DB_PASSWORD`
+- 🔐 Store SSL certificates securely
 
 ---
 
@@ -165,25 +208,74 @@ npm run dev
 ```
 
 Uses `nodemon` to automatically restart on file changes.
+- Access: http://localhost:3000
+- Frontend served from backend (same origin)
 
-### Production Mode
+### Production Mode (PM2 Cluster)
+
+```bash
+# 1. Install PM2 globally (one-time)
+npm install -g pm2
+
+# 2. Copy production environment (update credentials first!)
+copy .env.production .env
+
+# 3. Start production server (Run as Administrator for port 443)
+npm run start:prod
+
+# 4. Monitor
+npm run status
+npm run logs
+
+# 5. Stop/Restart
+npm run stop:prod
+npm run restart:prod
+```
+
+### Simple Production Mode (Single Instance)
 
 ```bash
 npm start
 ```
 
-### Expected Output
+### Expected Output (Development)
 
 ```
+Config: {
+  PORT: '3000',
+  HOST: 'localhost',
+  SSL_ENABLED: false,
+  NODE_ENV: 'development'
+}
+SSL disabled - using HTTP
 ✅ Connected to PostgreSQL database
 ✅ Database connection successful
 🚀 Server running on http://localhost:3000
 ```
 
+### Expected Output (Production)
+
+```
+Config: {
+  PORT: '443',
+  HOST: '0.0.0.0',
+  SSL_ENABLED: true,
+  NODE_ENV: 'production'
+}
+SSL enabled - using HTTPS
+✅ Connected to PostgreSQL database
+✅ Database connection successful
+🚀 Server running on https://0.0.0.0:443 (Process ID: 1234)
+```
+
 ### Verify Server is Running
 
 ```bash
+# Development
 curl http://localhost:3000/api/health
+
+# Production
+curl https://your-domain.com/api/health
 ```
 
 Response:
@@ -626,11 +718,26 @@ lsof -ti:3000 | xargs kill -9
 ## Development Scripts
 
 ```bash
-# Start server (production)
-npm start
-
 # Start server with auto-reload (development)
 npm run dev
+
+# Start server (simple production - single instance)
+npm start
+
+# Start PM2 cluster (production)
+npm run start:prod
+
+# Stop PM2 cluster
+npm run stop:prod
+
+# Restart PM2 cluster
+npm run restart:prod
+
+# View PM2 logs
+npm run logs
+
+# View PM2 status
+npm run status
 
 # Make user admin
 node make-admin.js <email>
@@ -647,24 +754,31 @@ node make-admin.js <email>
 - CORS configuration
 - Input validation
 - SQL injection prevention (parameterized queries)
+- HTTPS support with SSL certificates
+- PM2 cluster mode for reliability
+- Environment-specific configs (.env / .env.production)
 
-⚠️ **For Production:**
-- Use HTTPS only
-- Set strong `JWT_SECRET`
+⚠️ **Before Production Deployment:**
+- Update `JWT_SECRET` to a strong random value
+- Update `DB_PASSWORD` to a secure password
+- Ensure SSL certificates are valid
+- Configure firewall to allow port 443
+- Add `.env.production` to `.gitignore`
 - Enable rate limiting
-- Add request logging
-- Use environment-specific configs
 - Set up monitoring and alerts
 
 ---
 
-## Future Enhancements (Phase 2+)
+## Future Enhancements
 
-- [ ] Conversation management
-- [ ] Message storage and retrieval
-- [ ] Gemini AI integration
-- [ ] WebSocket for real-time chat
-- [ ] File upload handling
+- [x] Conversation management
+- [x] Message storage and retrieval
+- [x] Gemini AI integration
+- [x] WebSocket for real-time chat
+- [x] File upload handling
+- [x] HTTPS/SSL support
+- [x] PM2 cluster mode
+- [x] Static file serving
 - [ ] Email verification
 - [ ] Password reset
 - [ ] Rate limiting
@@ -682,5 +796,5 @@ Levis Lam
 
 ---
 
-**Last Updated:** October 24, 2025
-**Status:** ✅ Phase 1 Complete - Production Ready
+**Last Updated:** December 8, 2025
+**Status:** ✅ Production Deployment Complete - Dual-mode HTTP/HTTPS with PM2 Cluster

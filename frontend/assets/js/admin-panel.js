@@ -26,6 +26,52 @@ const admin = {
         this.renderPendingUsers();
         this.updateStats();
         this.updatePendingBadge();
+
+        // Handle URL parameters (e.g., from MS Teams notification)
+        this.handleUrlParameters();
+    },
+
+    /**
+     * Handle URL parameters for actions like approve from MS Teams
+     */
+    handleUrlParameters() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const action = urlParams.get('action');
+        const email = urlParams.get('email');
+
+        if (action === 'approve' && email) {
+            // Switch to pending tab
+            this.switchTab('pending');
+
+            // Find the pending user by email
+            const pendingUser = this.pendingUsers.find(u => u.email === email);
+
+            if (pendingUser) {
+                // Highlight the user row
+                setTimeout(() => {
+                    const row = document.getElementById(`pending-row-${pendingUser.id}`);
+                    if (row) {
+                        row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        row.classList.add('highlight-row');
+                        // Remove highlight after animation
+                        setTimeout(() => row.classList.remove('highlight-row'), 3000);
+                    }
+                }, 100);
+
+                // Ask for confirmation to approve
+                setTimeout(() => {
+                    if (confirm(`Approve user "${pendingUser.username}" (${email})?`)) {
+                        this.approveUser(pendingUser.id);
+                    }
+                }, 500);
+            } else {
+                // User might already be approved or doesn't exist
+                alert(`No pending user found with email: ${email}\n\nThe user may have already been approved or rejected.`);
+            }
+
+            // Clean up URL parameters
+            window.history.replaceState({}, document.title, window.location.pathname);
+        }
     },
 
     checkAuth() {
@@ -33,6 +79,9 @@ const admin = {
         const userStr = localStorage.getItem('user') || sessionStorage.getItem('user');
 
         if (!token || !userStr) {
+            // Save current URL with params for redirect after login
+            const currentUrl = window.location.pathname + window.location.search;
+            sessionStorage.setItem('redirectAfterLogin', currentUrl);
             alert('Please login first');
             window.location.href = '/login.html';
             return false;

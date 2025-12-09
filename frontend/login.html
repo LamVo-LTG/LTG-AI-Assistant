@@ -569,11 +569,19 @@
                     storage.setItem('user', JSON.stringify(data.user));
                     storage.setItem('isLoggedIn', 'true');
 
-                    // Redirect based on role (use absolute paths to avoid issues with wrong URLs)
-                    if (data.user.role === 'admin') {
-                        window.location.href = '/pages/admin-panel.html';
+                    // Check for saved redirect URL (e.g., from Teams notification)
+                    const redirectUrl = sessionStorage.getItem('redirectAfterLogin');
+                    sessionStorage.removeItem('redirectAfterLogin');
+
+                    if (redirectUrl) {
+                        window.location.href = redirectUrl;
                     } else {
-                        window.location.href = '/pages/ai-chatbot.html';
+                        // Redirect based on role (use absolute paths to avoid issues with wrong URLs)
+                        if (data.user.role === 'admin') {
+                            window.location.href = '/pages/admin-panel.html';
+                        } else {
+                            window.location.href = '/pages/ai-chatbot.html';
+                        }
                     }
                 } else {
                     // Show error message
@@ -597,7 +605,26 @@
         window.addEventListener('load', function() {
             const isLoggedIn = localStorage.getItem('isLoggedIn') || sessionStorage.getItem('isLoggedIn');
             if (isLoggedIn === 'true') {
-                window.location.href = '/pages/ai-chatbot.html';
+                // Check for saved redirect URL first
+                const redirectUrl = sessionStorage.getItem('redirectAfterLogin');
+                if (redirectUrl) {
+                    sessionStorage.removeItem('redirectAfterLogin');
+                    window.location.href = redirectUrl;
+                    return;
+                }
+
+                // Otherwise redirect based on role
+                const userStr = localStorage.getItem('user') || sessionStorage.getItem('user');
+                if (userStr) {
+                    const user = JSON.parse(userStr);
+                    if (user.role === 'admin') {
+                        window.location.href = '/pages/admin-panel.html';
+                    } else {
+                        window.location.href = '/pages/ai-chatbot.html';
+                    }
+                } else {
+                    window.location.href = '/pages/ai-chatbot.html';
+                }
             }
         });
 

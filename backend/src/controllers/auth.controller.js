@@ -1,6 +1,7 @@
 const userModel = require('../models/user.model');
 const bcryptUtil = require('../utils/bcrypt');
 const jwtConfig = require('../config/jwt');
+const teamsNotification = require('../services/teams-notification.service');
 
 // Standalone password validation function (avoids 'this' binding issues in Express routes)
 function validatePasswordStrength(password) {
@@ -62,6 +63,9 @@ class AuthController {
         role: 'user',
         is_active: false
       });
+
+      // Send MS Teams notification (async, fire-and-forget)
+      teamsNotification.sendSignupNotification(newUser);
 
       // Return pending approval message (no token - user cannot login yet)
       res.status(201).json({

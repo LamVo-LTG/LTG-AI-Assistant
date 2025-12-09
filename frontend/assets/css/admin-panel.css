@@ -800,3 +800,21 @@ body {
         justify-content: center;
     }
 }
+
+/* Highlight row animation (for approve from MS Teams) */
+@keyframes highlight-pulse {
+    0% {
+        background-color: rgba(34, 197, 94, 0.3);
+    }
+    50% {
+        background-color: rgba(34, 197, 94, 0.1);
+    }
+    100% {
+        background-color: rgba(34, 197, 94, 0.3);
+    }
+}
+
+.users-table tbody tr.highlight-row {
+    animation: highlight-pulse 1s ease-in-out 3;
+    box-shadow: 0 0 0 2px var(--success-color);
+}
